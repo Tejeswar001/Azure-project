@@ -1,0 +1,9 @@
+{
+	"name": "class-project-2",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "96ad9e03-ec7f-468d-86b3-1a34d91e1c58",
+		"tenantId": "e14e73eb-5251-4388-8d67-8f9f2e2d5a46"
+	}
+}
