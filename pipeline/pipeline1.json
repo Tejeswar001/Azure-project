@@ -34,7 +34,7 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "current_timestamp",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
@@ -61,7 +61,7 @@
 						]
 					},
 					{
-						"activity": "Set variable1",
+						"activity": "current_timestamp",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -77,15 +77,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "JsonSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT * FROM @{pipeline().parameters.schema}. @{pipeline().parameters.table}\n\nWHERE @{pipeline().parameters.cdc} > '@{activity('cdc').output.firstRow.cdc}'",
+							"type": "Expression"
 						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"sink": {
 						"type": "ParquetSink",
@@ -96,11 +94,19 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "Json2",
+						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					}
 				],
