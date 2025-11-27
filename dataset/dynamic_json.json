@@ -22,7 +22,8 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "empty.json",
-				"fileSystem": "class-project-container"
+				"folderPath": "monitor",
+				"fileSystem": "bronze"
 			}
 		},
 		"schema": {
