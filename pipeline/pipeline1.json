@@ -84,7 +84,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM @{pipeline().parameters.schema}. @{pipeline().parameters.table}\n\nWHERE @{pipeline().parameters.cdc} > '@{activity('cdc').output.firstRow.cdc}'",
+							"value": "SELECT * FROM @{pipeline().parameters.schema}. @{pipeline().parameters.table}\n\nWHERE \n@{pipeline().parameters.cdc} > \n\n'@{if(empty(pipeline().parameters.from_date),activity('cdc').output.firstRow.cdc,pipeline().parameters.from_date)}'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -210,7 +210,7 @@
 									"type": "JsonSource",
 									"additionalColumns": [
 										{
-											"name": "cdc",
+											"name": "cdc_first_row",
 											"value": {
 												"value": "@activity('max_cdc').output.resultSets[0].rows[0].max_cdc\n",
 												"type": "Expression"
@@ -244,14 +244,19 @@
 									"parameters": {
 										"container": "bronze",
 										"folder": "monitor",
-										"file": "cdc.json"
+										"file": "empty.json"
 									}
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "Json1",
-									"type": "DatasetReference"
+									"referenceName": "dynamic_json",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": "bronze",
+										"folder": "monitor",
+										"file": "empty.json"
+									}
 								}
 							]
 						},
@@ -300,6 +305,10 @@
 			"cdc": {
 				"type": "string",
 				"defaultValue": "updated_at"
+			},
+			"from_date": {
+				"type": "string",
+				"defaultValue": "2025-05-05"
 			}
 		},
 		"variables": {
